@@ -25,6 +25,8 @@ class Declaration():
       writeStr += "int "
     elif varType == "$":
       writeStr += "std::string "
+    elif varType == "%":
+      writeStr += "bool "
     else:
       pass
     writeStr += stream.pop(0)[0]
@@ -65,6 +67,23 @@ class If():
     self.writeStr = writeStr
   def eval(self):
     return 'if ( '+self.writeStr.eval()+') {'
+
+class Else():
+  def __init__(self,stream):
+    global tab
+    tab += 1
+  def eval(self):
+    return '} else {'
+
+class WhileLoop():
+  def __init__(self,stream):
+    global tab
+    tab += 1
+    stream.pop(0)
+    writeStr = Expression(stream)
+    self.writeStr = writeStr
+  def eval(self):
+    return 'while ( '+self.writeStr.eval()+') {'
 
 class ForLoop():
   def __init__(self,stream):
@@ -112,4 +131,6 @@ classes = {
   p_expr:Expression,
   p_assignment:Assignment,
   p_for:ForLoop,
+  p_while:WhileLoop,
+  p_else:Else,
 }

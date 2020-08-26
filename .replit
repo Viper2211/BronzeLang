@@ -1,1 +1,1 @@
-run="python bronze/bronze.py ./main.brz"
+run="python bronze/bronze.py ./main.brz run"

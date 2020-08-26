@@ -1,9 +1,12 @@
 # Data types
 STRING = 'STRING'
 NUMBER = 'NUMBER'
+BOOL = 'BOOLEAN'
 ID = 'IDENTIFIER'
 IF = 'IF'
+ELSE = 'ELSE'
 FOR = 'FOR'
+WHILE = 'WHILE'
 END = 'END'
 
 # Other
@@ -39,16 +42,20 @@ def p_expr(stream:list)->bool:
     if accept(stream,OP)[0] == '~':
       return p_expr(stream)
     return True
+  if accept(stream,(BOOL,ID)) and len(stream)>1:
+    if accept(stream,OP)[0] in ('==','>','<','<=','>=','!=','&&','||'):
+      return p_expr(stream)
+    return True
   if len(stream) == 0:
     return True
   return False
 
 def p_declaration(stream:list)->bool:
-  if accept(stream,OP)[0] in ("#",'$'):
+  if accept(stream,OP)[0] in ("#",'$','%'):
     expect(stream,ID)
-    accept(stream,OP)
-    p_expr(stream)
-    return True
+    if accept(stream,OP)[0] == "=":
+      p_expr(stream)
+      return True
   return False
 
 def p_assignment(stream:list)->bool:
@@ -90,12 +97,23 @@ def p_for(stream:list)->bool:
           return True
   return False
 
+def p_while(stream:list)->bool:
+  if expect(stream,WHILE):
+    if p_expr(stream):
+      return True
+  return False
+
+def p_else(stream:list)->bool:
+  if expect(stream,ELSE):
+    return True
+  return False
+
 def p_end(stream:list)->bool:
   if expect(stream,END):
     return True
   return False
 
-parsers = [p_for,p_if,p_end,p_declaration,p_assignment,p_expr]  
+parsers = [p_for,p_while,p_if,p_else,p_end,p_declaration,p_assignment,p_expr]  
 
 def parse(stream:list) :
   streamCopy = stream.copy()

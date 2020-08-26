@@ -2,7 +2,10 @@
 #include <string>
 
 int main(){
-		for (int i=1 ;i<3 ;i++) {
-		int a = 1 ;
-	}
+	int a = 1 ;
+		if ( a == 1 ) {
+		int b = 1 ;
+			} else {
+			;
+		}
 }
