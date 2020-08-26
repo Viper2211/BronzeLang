@@ -6,5 +6,5 @@ return a * b ;
 
 int main(){
 ;
-int w = 1 ;
+int w = lol ( 10 , 10 ) ;
 }

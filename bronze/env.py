@@ -14,7 +14,7 @@ class Env():
       tokens = lex(i)
       parsed = parse(tokens)
       parsed = classes[parsed[0]](parsed[1])
-      if type(parsed) in (Declaration,Assignment,Expression) and not inFunction:
+      if type(parsed) in (Declaration,Assignment,Expression,FunctionCall) and not inFunction:
         open('main.cpp','a').write('\t'*tab +parsed.eval()+";\n")
       elif not inFunction and type(parsed) in (If,WhileLoop,ForLoop):
         open('main.cpp','a').write('\t'*tab +parsed.eval()+"\n")
@@ -145,6 +145,14 @@ class Function():
   def eval(self):
     return self.writeStr+'{'
 
+class FunctionCall:
+  def __init__(self,stream):
+    self.writeStr = ""
+    for i in stream:
+      self.writeStr += i[0]
+  def eval(self):
+    return self.writeStr
+
 class Return():
   def __init__(self,stream):
     stream.pop(0)
@@ -175,4 +183,5 @@ classes = {
   p_else:Else,
   p_function:Function,
   p_return:Return,
+  p_function_call:FunctionCall,
 }
