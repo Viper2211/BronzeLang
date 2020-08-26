@@ -7,8 +7,9 @@ IF = 'IF'
 ELSE = 'ELSE'
 FOR = 'FOR'
 WHILE = 'WHILE'
+FUNC = 'FUNCTION'
 END = 'END'
-
+RETURN = 'RETURN'
 # Other
 OP = 'OP'
 
@@ -97,6 +98,11 @@ def p_for(stream:list)->bool:
           return True
   return False
 
+def p_function(stream:list):
+  if expect(stream,FUNC):
+    return True
+  return False
+
 def p_while(stream:list)->bool:
   if expect(stream,WHILE):
     if p_expr(stream):
@@ -108,12 +114,17 @@ def p_else(stream:list)->bool:
     return True
   return False
 
+def p_return(stream:list)->bool:
+  if expect(stream,RETURN):
+    return True
+  return False
+
 def p_end(stream:list)->bool:
   if expect(stream,END):
     return True
   return False
 
-parsers = [p_for,p_while,p_if,p_else,p_end,p_declaration,p_assignment,p_expr]  
+parsers = [p_function,p_for,p_while,p_if,p_return,p_else,p_end,p_declaration,p_assignment,p_expr]  
 
 def parse(stream:list) :
   streamCopy = stream.copy()

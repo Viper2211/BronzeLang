@@ -21,4 +21,4 @@ def start():
   return time.time()-startTime
 
 if __name__ == "__main__":
-  print(f"=> Compiled and exited in {start()} seconds")
+  print(f"\033[92m=> Compiled and exited in {start()} seconds")

@@ -2,20 +2,30 @@ from lexer import lex
 from parser import *
 
 tab = 1
+inFunction = False
+functions = ""
 
 class Env():
   def __init__(self,source):
     self.source = source
-    open('main.cpp','w').write('#include <iostream>\n#include <string>\n\nint main(){\n')
+    global functions
+    open('main.cpp','w').write('int main(){\n')
     for i in open(self.source,'r').readlines():
       tokens = lex(i)
       parsed = parse(tokens)
       parsed = classes[parsed[0]](parsed[1])
-      if type(parsed) in (Declaration,Assignment,Expression):
+      if type(parsed) in (Declaration,Assignment,Expression) and not inFunction:
         open('main.cpp','a').write('\t'*tab +parsed.eval()+";\n")
-      else:
+      elif not inFunction and type(parsed) in (If,WhileLoop,ForLoop):
         open('main.cpp','a').write('\t'*tab +parsed.eval()+"\n")
+      else:
+        if type(parsed) == Function or type(parsed) == End:
+          functions += parsed.eval()+"\n"
+        else:
+          functions += parsed.eval()+";\n"
     open('main.cpp','a').write('}')
+    currentCode = open('main.cpp','r').read()
+    open('main.cpp','w').write('#include <iostream>\n#include <string>\n'+functions+"\n"+currentCode)
 
 class Declaration():
   def __init__(self,stream):
@@ -116,12 +126,42 @@ class ForLoop():
       return f'for (int {self.varName}={self.start};{self.varName}<{self.end};{self.varName}++) '+'{'
     return f'for (int {self.varName}={self.start};{self.varName}<{self.end};{self.varName}+={self.increment}) '+'{'
 
+class Function():
+  def __init__(self,stream):
+    global tab, inFunction
+    inFunction = True
+    stream.pop(0)
+    writeStr = ""
+    for i in stream:
+      if i[0] == "#":
+        writeStr += "int"
+      elif i[0] == "$":
+        writeStr += "std::string"
+      elif i[0] == "%":
+        writeStr += "bool"
+      else:
+        writeStr += " "+i[0]+" "
+    self.writeStr = writeStr
+  def eval(self):
+    return self.writeStr+'{'
+
+class Return():
+  def __init__(self,stream):
+    stream.pop(0)
+    self.writeStr = "return "
+    self.expr = Expression(stream)
+  def eval(self):
+    return f'{self.writeStr}{self.expr.eval()}'
+
 class End():
   def __init__(self,stream):
     global tab
-    tab -= 1
+    if tab > 0:
+      tab -= 1
     self.writeStr = "}"
   def eval(self):
+    global inFunction
+    inFunction = False
     return self.writeStr
 
 classes = {
@@ -133,4 +173,6 @@ classes = {
   p_for:ForLoop,
   p_while:WhileLoop,
   p_else:Else,
+  p_function:Function,
+  p_return:Return,
 }

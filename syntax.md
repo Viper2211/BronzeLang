@@ -8,7 +8,33 @@ $ string = "Hello world" ; String
 
 ; If statements
 ? integer == 1 
+  ; is one
+; Else
+:
+  ; isn't one
+.
 
+; For loop
+; goes from the range of 1 - 4
+@ i 1|4
+
+.
+
+; increment is optional
+@ i 1|20|2
+
+.
+
+; While loop
+# a = 0
+@@ a < 10
+  a = a + 10
+.
+
+;Functions
+
+^ # add(#a, #b) ; the # means that this function will return either null or an integer
+  >> a + b; return statement
 .
 
 ```
