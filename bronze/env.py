@@ -14,14 +14,14 @@ class Env():
       tokens = lex(i)
       parsed = parse(tokens)
       parsed = classes[parsed[0]](parsed[1])
-      if type(parsed) in (Declaration,Assignment,Expression,FunctionCall) and not inFunction:
+      if type(parsed) in (Declaration,Assignment,Expression,FunctionCall) and not inFunction and i != "\n":
         open('main.cpp','a').write('\t'*tab +parsed.eval()+";\n")
-      elif not inFunction and type(parsed) in (If,WhileLoop,ForLoop,End):
+      elif not inFunction and type(parsed) in (If,WhileLoop,ForLoop,End) and i != "\n":
         open('main.cpp','a').write('\t'*tab +parsed.eval()+"\n")
       else:
-        if type(parsed) == Function or type(parsed) == End:
+        if type(parsed) == Function or type(parsed) == End and i != "\n":
           functions += parsed.eval()+"\n"
-        else:
+        elif i != "\n":
           functions += parsed.eval()+";\n"
     open('main.cpp','a').write('}')
     currentCode = open('main.cpp','r').read()
