@@ -9,9 +9,6 @@ $ string = "Hello world" ; String
 ; If statements
 ? integer == 1 
   ; is one
-; Else
-:
-  ; isn't one
 .
 
 ; For loop
@@ -37,4 +34,5 @@ $ string = "Hello world" ; String
   >> a + b; return statement
 .
 
+#sum = add(1,2);
 ```

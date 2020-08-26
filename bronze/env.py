@@ -16,7 +16,7 @@ class Env():
       parsed = classes[parsed[0]](parsed[1])
       if type(parsed) in (Declaration,Assignment,Expression,FunctionCall) and not inFunction:
         open('main.cpp','a').write('\t'*tab +parsed.eval()+";\n")
-      elif not inFunction and type(parsed) in (If,WhileLoop,ForLoop):
+      elif not inFunction and type(parsed) in (If,WhileLoop,ForLoop,End):
         open('main.cpp','a').write('\t'*tab +parsed.eval()+"\n")
       else:
         if type(parsed) == Function or type(parsed) == End:
