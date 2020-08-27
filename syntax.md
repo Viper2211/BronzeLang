@@ -34,5 +34,14 @@ $ string = "Hello world" ; String
   >> a + b; return statement
 .
 
+; Function call
 #sum = add(1,2);
+
+
+; Import
+--> ./this_file_doesnt.exist
+
+; Let's say that the file we imported had a function for multiplication!
+; We can now use it here
+#sum = multiplication_function(100)
 ```

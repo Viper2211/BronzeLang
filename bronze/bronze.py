@@ -1,6 +1,7 @@
 import errors
 from env import Env
 from sys import argv
+import preprocessing
 import time
 from os import system
 
@@ -9,8 +10,10 @@ fileName = ""
 def start():
   startTime = time.time()
   try :
-    environment = Env(argv[1])
+    newCode = preprocessing.preprocess(open(argv[1],'r').read())
     fname = argv[1].split('.brz')[0]
+    open(fname+'.brz_in','w').write(newCode)
+    environment = Env(fname+'.brz_in')
     system('g++ -o '+fname+".brz_out "+fname+'.cpp')
     system('chmod +x '+fname+'.brz_out')
     system(''+fname+'.brz_out')
@@ -18,7 +21,10 @@ def start():
     raise
     errors.FileDoesntExistError()
 
-  return time.time()-startTime
+  return time.time()-startTime,fname
 
 if __name__ == "__main__":
-  print(f"\033[92m=> Compiled and exited in {start()} seconds")
+  speed,filename = start()
+  print(f"\033[92m=> Compiled and exited in {speed} seconds")
+  system('rm '+filename+'.brz_in')
+  system('rm '+filename+'.cpp')
