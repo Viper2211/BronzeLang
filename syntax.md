@@ -6,7 +6,7 @@ $ string = "Hello world" ; String
 % boolean = false ; boolean
 
 
-; If statements
+;` If statements
 ? integer == 1 
   ; is one
 .

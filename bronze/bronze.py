@@ -1,3 +1,4 @@
+# Imports
 import errors
 from env import Env
 from sys import argv
@@ -5,18 +6,20 @@ import preprocessing
 import time
 from os import system
 
+# File name
 fileName = ""
 
 def start():
+  # Getting the start time
   startTime = time.time()
   try :
+    # Executing and compiling everythin
     newCode = preprocessing.preprocess(open(argv[1],'r').read())
     fname = argv[1].split('.brz')[0]
     open(fname+'.brz_in','w').write(newCode)
-    environment = Env(fname+'.brz_in')
+    environment = Env(fname)
     system('g++ -o '+fname+".brz_out "+fname+'.cpp')
     system('chmod +x '+fname+'.brz_out')
-    system(''+fname+'.brz_out')
   except:
     raise
     errors.FileDoesntExistError()

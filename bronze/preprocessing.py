@@ -1,11 +1,19 @@
+import errors
 
-
-def preprocess(code:str):
+# Preprocess
+def preprocess(code:str)->str:
+  "preproccesing code. returns string"
   lines = code.split('\n')
+  
   for i in range(0,len(lines)):
     line = lines[i]
+    # checking for imports
     if line[:3] == "-->":
       fileName = line[4:]
-      fileContent = open(fileName,'r').read() 
+      try:
+        fileContent = open(fileName,'r').read() 
+      except: 
+        errors.FileDoesntExistError()
       lines[i] = fileContent
+  
   return "\n".join(lines)

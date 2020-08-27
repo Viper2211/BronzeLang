@@ -1,0 +1,23 @@
+
+; Write function
+; writes out onto the screen
+^ # write($ string)
+cpp:: std::cout<< string << std::endl;
+.
+^ # write(# string)
+cpp:: std::cout<< string << std::endl;
+.
+
+; Input function
+; gets Input
+^ $ get()
+cpp:: std::string input = "";
+cpp:: std::cin >> input;
+>> input
+.
+
+; Random function
+; returns a ranodom number
+^ # r()
+cpp:: return rand()
+.

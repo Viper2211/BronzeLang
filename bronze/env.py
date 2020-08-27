@@ -1,36 +1,58 @@
 from lexer import lex
 from parser import *
+import re
 
-tab = 1
+tab = 0
 inFunction = False
 functions = ""
 
+# the main part of our code. Env class is a transpiler that will take our bronze code and produce the equivalent code in main.cpp as C++ code.
 class Env():
   def __init__(self,source):
-    self.source = source
+    self.source = source+'.brz_in'
+    cppFile = source+'.cpp'
     global functions
-    open('main.cpp','w').write('int main(){\n')
-    for i in open(self.source,'r').readlines():
+    open(cppFile,'w').write('int main(){\n')
+    
+    # Processing the file again
+    raw_lines = open(self.source,'r').readlines()
+    lines = []
+    for i in raw_lines:
+      if len(re.match(r'[ \n\t]*',i).group())!=len(i.split(';')[0]):
+        lines.append(i)
+        
+    # Actual start to lexing and parsing
+    for i in lines:
+      # Lexing
       tokens = lex(i)
+      # Parsing
       parsed = parse(tokens)
+      # Getting the ast
       parsed = classes[parsed[0]](parsed[1])
-      if type(parsed) in (Declaration,Assignment,Expression,FunctionCall) and not inFunction and i != "\n":
-        open('main.cpp','a').write('\t'*tab +parsed.eval()+";\n")
-      elif not inFunction and type(parsed) in (If,WhileLoop,ForLoop,End) and i != "\n":
-        open('main.cpp','a').write('\t'*tab +parsed.eval()+"\n")
+      
+      # Based on the differnt ast, they will be written differently
+      if type(parsed) in (Declaration,Assignment,Expression,FunctionCall,CppCode) and not inFunction:
+        open(cppFile,'a').write(parsed.eval()+";\n")
+      elif not inFunction and type(parsed) in (If,WhileLoop,ForLoop,End):
+        open(cppFile,'a').write(parsed.eval()+"\n")
       else:
-        if type(parsed) == Function or type(parsed) == End and i != "\n":
+        if type(parsed) in (Function,End) :
           functions += parsed.eval()+"\n"
-        elif i != "\n":
+        else:
           functions += parsed.eval()+";\n"
-    open('main.cpp','a').write('}')
-    currentCode = open('main.cpp','r').read()
-    open('main.cpp','w').write('#include <iostream>\n#include <string>\n'+functions+"\n"+currentCode)
+          
+    # Writing to the file
+    open(cppFile,'a').write('}')
+    currentCode = open(cppFile,'r').read()
+    open(cppFile,'w').write('#include <iostream>\n#include <string>\n#include <cstdlib>\n'+functions+"\n"+currentCode)
 
+#Initial variable assignment
 class Declaration():
+  'declaration : [#$%] ID = expression'
   def __init__(self,stream):
     writeStr = ""
     varType = stream.pop(0)[0]
+    # Now, we will examine the code and if the character is a recognizable symbol, we will convert it into a string abbreviation of its data type.
     if varType == "#":
       writeStr += "int "
     elif varType == "$":
@@ -38,7 +60,9 @@ class Declaration():
     elif varType == "%":
       writeStr += "bool "
     else:
+      #otherwise, just ignore.
       pass
+    # now, we will add our data type into our main code in main.cpp
     writeStr += stream.pop(0)[0]
     stream.pop(0)
     self.value = Expression(stream)
@@ -46,9 +70,13 @@ class Declaration():
   def eval(self):
     return f'{self.writeStr} = {self.value.eval()}'
 
+
+# This is the class for re-assigning a variable later on.
 class Assignment():
+  'assignment : ID = expression'
   def __init__(self,stream):
     writeStr = ""
+    # adding the new expression to our main.cpp
     writeStr += stream.pop(0)[0]
     stream.pop(0)
     self.value = Expression(stream)
@@ -56,10 +84,14 @@ class Assignment():
   def eval(self):
     return f'{self.writeStr} = {self.value.eval()}'
 
+
+# Expression class to assign expressions without result. Ex: 5+6. Would assign + operator to 5 and 6 without evaluating result to 11.
 class Expression():
+  'expression: ID [+,-,*,/] ID'
   def __init__(self,stream):
     writeStr =""
     for i in stream:
+      #checking the expression for if there is an operator, like 3 . If so, add a + sign. Otherwise, if it is a string like "cat", leave it as is.
       if i[0] =="~":
         writeStr += "+"+""
       else:
@@ -67,8 +99,11 @@ class Expression():
     self.writeStr = writeStr
   def eval(self):
     return self.writeStr
-    
+
+
+# If Statements
 class If():
+  'if statement : ? expression'
   def __init__(self,stream):
     global tab
     tab += 1
@@ -77,15 +112,21 @@ class If():
     self.writeStr = writeStr
   def eval(self):
     return 'if ( '+self.writeStr.eval()+') {'
-
+    
+    
+# Else Statements
 class Else():
+  'else - :'
   def __init__(self,stream):
     global tab
     tab += 1
   def eval(self):
     return '} else {'
 
+
+# While Loop construct
 class WhileLoop():
+  'while loop : @@ expression'
   def __init__(self,stream):
     global tab
     tab += 1
@@ -94,8 +135,12 @@ class WhileLoop():
     self.writeStr = writeStr
   def eval(self):
     return 'while ( '+self.writeStr.eval()+') {'
-
+    
+    
+# For loop construct
 class ForLoop():
+  '''for loop : @ ID expression|expression
+                @ ID expression|expression|expression '''
   def __init__(self,stream):
     global tab
     tab += 1
@@ -126,13 +171,17 @@ class ForLoop():
       return f'for (int {self.varName}={self.start};{self.varName}<{self.end};{self.varName}++) '+'{'
     return f'for (int {self.varName}={self.start};{self.varName}<{self.end};{self.varName}+={self.increment}) '+'{'
 
+
+# Functions
 class Function():
+  'function : ^ [#$%] ( [#$%] ID , ... )'
   def __init__(self,stream):
     global tab, inFunction
     inFunction = True
     stream.pop(0)
     writeStr = ""
     for i in stream:
+      # now we will check to relate symbols to their data types. if the data type is not found, we will try to evaluate whatever symbol is given.
       if i[0] == "#":
         writeStr += "int"
       elif i[0] == "$":
@@ -144,24 +193,33 @@ class Function():
     self.writeStr = writeStr
   def eval(self):
     return self.writeStr+'{'
+    
 
+#program runs and calls to function. Then, function does a task and returns back to main program.
 class FunctionCall:
+  'function call : ID ( expression , ...)'
   def __init__(self,stream):
     self.writeStr = ""
     for i in stream:
       self.writeStr += i[0]
   def eval(self):
     return self.writeStr
-
+    
+    
+# Return Statement
 class Return():
+  'return : >> expression'
   def __init__(self,stream):
     stream.pop(0)
     self.writeStr = "return "
     self.expr = Expression(stream)
   def eval(self):
     return f'{self.writeStr}{self.expr.eval()}'
-
+    
+    
+#Closing Bracket
 class End():
+  'end: }'
   def __init__(self,stream):
     global tab
     if tab > 0:
@@ -172,6 +230,17 @@ class End():
     inFunction = False
     return self.writeStr
 
+
+# class to compile code using C ++. Compiler is main.cpp
+class CppCode():
+  def __init__(self,stream):
+    self.writeStr = ""
+    #now, we will compile our code by copying every line of code from main.cpp except for the skeleton and like a transpiler.
+    self.writeStr = stream[0][0][5:]
+  def eval(self):
+    return self.writeStr
+
+# Dictionary holding all classes
 classes = {
   p_end:End,
   p_if:If,
@@ -184,4 +253,5 @@ classes = {
   p_function:Function,
   p_return:Return,
   p_function_call:FunctionCall,
+  p_cpp:CppCode,
 }
