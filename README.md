@@ -5,8 +5,10 @@
 $ string = "Hello world" ; String 
 % boolean = false ; boolean
 
+# MATH = 1+1/1%2*100
 
-;` If statements
+
+; If statements
 ? integer == 1 
   ; is one
 .
@@ -47,6 +49,9 @@ write("Hello Bronze!")
 
 ; Get function
 ; gets user input
+$ name = "John"
 write("What is your name")
-$ name = get()
+name = get()
+; saying hello!
+write("Hello "+name)
 ```
