@@ -10,9 +10,13 @@ def preprocess(code:str)->str:
     # checking for imports
     if line[:3] == "-->":
       fileName = line[4:]
+      fileName = fileName.replace(' ','')
+      fileName = fileName.replace('\n','')
+      fileName = fileName.replace('\t','')
       try:
         fileContent = open(fileName,'r').read() 
       except: 
+        print(fileName)
         errors.FileDoesntExistError()
       lines[i] = fileContent
   

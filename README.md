@@ -37,11 +37,16 @@ $ string = "Hello world" ; String
 ; Function call
 #sum = add(1,2);
 
+; Standard Library
+; Bronze has a simple standard library and access to the cpp standard library
+--> ./bronze/std.brz
 
-; Import
---> ./this_file_doesnt.exist
+; Print function
+; displays text on the screen
+write("Hello Bronze!")
 
-; Let's say that the file we imported had a function for multiplication!
-; We can now use it here
-#sum = multiplication_function(100)
+; Get function
+; gets user input
+write("What is your name")
+$ name = get()
 ```

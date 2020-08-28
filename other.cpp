@@ -2,6 +2,9 @@
 #include <string>
 #include <cstdlib>
 #include <cmath>
+int add  ( int a  , int b  )   {
+return a + b ;
+}
 int write  ( std::string string  ) {
  std::cout<< string << std::endl;
 }
@@ -32,5 +35,21 @@ int e_xp  ( int a  ) {
 }
 
 int main(){
-write(r(2));
+int integer = 1  ;
+std::string string = "Hello world"  ;
+bool boolean = false  ;
+if ( integer == 1  ) {
+}
+for (int i=1 ;i<4 ;i++) {
+}
+for (int i=1 ;i<20 ;i+=2 ) {
+}
+int a = 0 ;
+while ( a < 10 ) {
+a = a + 10 ;
+}
+int sum = add ( 1 , 2 ) ;
+write("Hello Bronze!");
+write("What is your name");
+std::string name = get ( ) ;
 }
