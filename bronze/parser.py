@@ -124,7 +124,7 @@ def p_for(stream:list)->bool:
   return False
 
 def p_cpp(stream:list):
-  'c++ : cpp:: {c++ code here}'
+  'c++ : cpp__ {c++ code here}'
   if accept(stream,CPP):
     return True
   return False

@@ -3,7 +3,7 @@ import parser
 
 # Tokens
 tokens = {
-  r"cpp\:\: [\s\S]*":parser.CPP,
+  r"cpp\_\_ [\s\S]*":parser.CPP,
   r'\?':parser.IF,
   r'\@\@':parser.WHILE,
   r'\@':parser.FOR,

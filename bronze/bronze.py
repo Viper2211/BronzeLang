@@ -30,4 +30,4 @@ if __name__ == "__main__":
   speed,filename = start()
   print(f"\033[92m=> Compiled in {speed} seconds\033[0m")
   system('rm '+filename+'.brz_in')
-  system('rm '+filename+'.cpp')
+  #system('rm '+filename+'.cpp')

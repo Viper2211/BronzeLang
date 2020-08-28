@@ -3,17 +3,17 @@
 ; Write function
 ; writes out onto the screen
 ^ # write($ string)
-cpp:: std::cout<< string << std::endl;
+cpp__ std::cout<< string << std::endl;
 .
 ^ # write(# string)
-cpp:: std::cout<< string << std::endl;
+cpp__ std::cout<< string << std::endl;
 .
 
 ; Input function
 ; gets Input
 ^ $ get()
-cpp:: std::string input = "";
-cpp:: std::cin >> input;
+cpp__ std::string input = "";
+cpp__ std::cin >> input;
 >> input
 .
 
@@ -21,8 +21,10 @@ cpp:: std::cin >> input;
 
 ; Random function
 ; returns a random number
-^ # r()
-cpp:: return rand() 
+^ # r(#i)
+cpp__ if (isdigit(i)){
+cpp__   std::cout << rand() % i;
+cpp__ }
 .
 
 ;; Math functions
@@ -34,16 +36,16 @@ cpp:: return rand()
 
 ; Sqrt function
 ^ # square_root(#a)
-cpp:: return sqrt(a)
+cpp__ return sqrt(a)
 .
 
 ; Log function
 ^ # logarithm(#a)
-cpp:: return log(a)
+cpp__ return log(a)
 .
 
 ; E exponent function
 ^ # e_xp(#a)
-cpp:: return exp(a)
+cpp__ return exp(a)
 .
 

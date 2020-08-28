@@ -1,3 +1,4 @@
 --> ./bronze/std.brz
 
-write(r());
+
+write(r(2));

@@ -31,8 +31,9 @@ class Env():
       # Parsing
       parsed = parse(tokens)
       # Getting the ast
-      parsed = classes[parsed[0]](parsed[1])
-      
+      try:
+        parsed = classes[parsed[0]](parsed[1])
+      except: print(parsed)
       # Based on the differnt ast, they will be written differently
       if type(parsed) in (Declaration,Assignment,Expression,FunctionCall,CppCode) and not inFunction:
         open(cppFile,'a').write(parsed.eval()+";\n")
@@ -190,6 +191,7 @@ class Function():
   def __init__(self,stream):
     global tab, inFunction
     inFunction = True
+    tab += 1
     stream.pop(0)
     writeStr = ""
     for i in stream:
@@ -238,10 +240,11 @@ class End():
     global tab
     if tab > 0:
       tab -= 1
+    self.tab = tab
     self.writeStr = "}"
   def eval(self):
     global inFunction
-    inFunction = False
+    if self.tab == 0: inFunction = False
     return self.writeStr
 
 
