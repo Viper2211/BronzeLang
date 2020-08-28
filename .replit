@@ -1,1 +1,0 @@
-run="python ./bronze/bronze.py ./other.brz; ./other.brz_out"
