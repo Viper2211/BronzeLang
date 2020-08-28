@@ -1,3 +1,4 @@
+;; Input & Output
 
 ; Write function
 ; writes out onto the screen
@@ -16,8 +17,33 @@ cpp:: std::cin >> input;
 >> input
 .
 
+;; Random
+
 ; Random function
-; returns a ranodom number
+; returns a random number
 ^ # r()
-cpp:: return rand()
+cpp:: return rand() 
 .
+
+;; Math functions
+
+; Square function
+^ # square(#a)
+>> a * a
+.
+
+; Sqrt function
+^ # square_root(#a)
+cpp:: return sqrt(a)
+.
+
+; Log function
+^ # logarithm(#a)
+cpp:: return log(a)
+.
+
+; E exponent function
+^ # e_xp(#a)
+cpp:: return exp(a)
+.
+

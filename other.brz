@@ -1,4 +1,3 @@
 --> ./bronze/std.brz
 
-write(r()-1000);
-$ move = get();
+write(r());

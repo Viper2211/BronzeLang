@@ -5,6 +5,7 @@ import re
 tab = 0
 inFunction = False
 functions = ""
+starter = '#include <iostream>\n#include <string>\n#include <cstdlib>\n#include <cmath>\n'
 
 # the main part of our code. Env class is a transpiler that will take our bronze code and produce the equivalent code in main.cpp as C++ code.
 class Env():
@@ -12,6 +13,8 @@ class Env():
     self.source = source+'.brz_in'
     cppFile = source+'.cpp'
     global functions
+
+    # setting up the file
     open(cppFile,'w').write('int main(){\n')
     
     # Processing the file again
@@ -44,7 +47,7 @@ class Env():
     # Writing to the file
     open(cppFile,'a').write('}')
     currentCode = open(cppFile,'r').read()
-    open(cppFile,'w').write('#include <iostream>\n#include <string>\n#include <cstdlib>\n'+functions+"\n"+currentCode)
+    open(cppFile,'w').write(starter+functions+"\n"+currentCode)
 
 #Initial variable assignment
 class Declaration():
@@ -146,29 +149,38 @@ class ForLoop():
     tab += 1
     writeStr = ""
     stream.pop(0)
+    # Getting the identifiers name
     self.varName = stream.pop(0)[0]
+    # Checking for the first seperator and finding the index
     self.sep1 = 0
     for i in range(0,len(stream)):
       if stream[i][0] == "|":
         self.sep1 = i
         break
+    # Check for the second seperator. If it does not exist, sep2 will remain False
     self.sep2 = False
     for i in range(0,len(stream)):
       if stream[i][0] == "|" and i > self.sep1:
         self.sep2 = i
         break
+
+    # The start of the range
     self.start = Expression(stream[:self.sep1])
+    # If a second "|" exists, then proceed to get the increment 
     if self.sep2:
       self.end = Expression(stream[self.sep1+1:self.sep2])
       self.increment = Expression(stream[self.sep2+1:]).eval()
     else:
+      # Otherwise, just get the end value of the range
       self.end = Expression(stream[self.sep1+1:])
 
     self.start,self.end= self.start.eval(),self.end.eval()
 
   def eval(self):
+    # If there no increment return something with an increment of 1
     if not self.sep2:
       return f'for (int {self.varName}={self.start};{self.varName}<{self.end};{self.varName}++) '+'{'
+    # Otherwise increment the variable with this
     return f'for (int {self.varName}={self.start};{self.varName}<{self.end};{self.varName}+={self.increment}) '+'{'
 
 
@@ -210,8 +222,10 @@ class FunctionCall:
 class Return():
   'return : >> expression'
   def __init__(self,stream):
-    stream.pop(0)
+    if stream.pop(0)[0] != ">>":
+      raise Exception
     self.writeStr = "return "
+    # Just get an expr
     self.expr = Expression(stream)
   def eval(self):
     return f'{self.writeStr}{self.expr.eval()}'
@@ -231,11 +245,12 @@ class End():
     return self.writeStr
 
 
-# class to compile code using C ++. Compiler is main.cpp
+# class to write cpp code in bronze
 class CppCode():
+  'c++ : cpp:: expression'
   def __init__(self,stream):
     self.writeStr = ""
-    #now, we will compile our code by copying every line of code from main.cpp except for the skeleton and like a transpiler.
+    #now, we will add the code to the writestr, popping off the "cpp::"
     self.writeStr = stream[0][0][5:]
   def eval(self):
     return self.writeStr
