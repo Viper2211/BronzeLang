@@ -13,7 +13,7 @@ def start():
   # Getting the start time
   startTime = time.time()
   try :
-    # Executing and compiling everythin
+    # Executing and compiling everything
     newCode = preprocessing.preprocess(open(argv[1],'r').read())
     fname = argv[1].split('.brz')[0]
     open(fname+'.brz_in','w').write(newCode)
@@ -29,5 +29,6 @@ def start():
 if __name__ == "__main__":
   speed,filename = start()
   print(f"\033[92m=> Compiled in {speed} seconds\033[0m")
+  # Deleting unnecessary files
   system('rm '+filename+'.brz_in')
-  #system('rm '+filename+'.cpp')
+  system('rm '+filename+'.cpp')

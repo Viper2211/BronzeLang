@@ -46,5 +46,6 @@ write("Hello Bronze!")
 
 ; Get function
 ; gets user input
+$ name =""
 write("What is your name")
-$ name = get()
+name = get()

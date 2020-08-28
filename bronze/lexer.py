@@ -9,6 +9,7 @@ tokens = {
   r'\@':parser.FOR,
   r'\:':parser.ELSE,
   r'\^':parser.FUNC,
+#  r'\^\^':parser.CLASS,
   r'\.':parser.END,
   r"\d+":parser.NUMBER,
   r'\>\>':parser.RETURN,

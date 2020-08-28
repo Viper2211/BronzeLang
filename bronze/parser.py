@@ -9,6 +9,7 @@ ELSE = 'ELSE'
 FOR = 'FOR'
 WHILE = 'WHILE'
 FUNC = 'FUNCTION'
+CLASS = 'CLASS'
 END = 'END'
 RETURN = 'RETURN'
 # Other
@@ -73,18 +74,14 @@ def p_declaration(stream:list)->bool:
   'declaration : [#$%] ID = expression'
   if accept(stream,OP)[0] in ("#",'$','%'):
     expect(stream,ID)
-    if accept(stream,OP)[0] == "=":
-      p_expr(stream)
-      return True
+    return True
   return False
 
 # Assignment
 def p_assignment(stream:list)->bool:
   'assignment : ID = expression'
   if expect(stream,ID):
-    if accept(stream,OP)[0] == "=":
-      if p_expr(stream):
-        return True
+    return True
   return False
 
 # If statements
@@ -143,6 +140,14 @@ def p_function_call(stream:list)->bool:
     if expect(stream,OP)[0] == '(':
       return True
   return False
+
+''' COMING SOON!
+def p_class(stream:list)->bool:
+  'class : ^^ [#$%] ()'
+  if expect(stream,CLASS):
+    return True
+  return False
+'''
 
 # While Loop
 def p_while(stream:list)->bool:
