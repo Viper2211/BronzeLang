@@ -17,7 +17,7 @@ def start():
     newCode = preprocessing.preprocess(open(argv[1],'r').read())
     fname = argv[1].split('.brz')[0]
     open(fname+'.brz_in','w').write(newCode)
-    environment = Env(fname)
+    Env(fname)
     system('g++ -o '+fname+".brz_out "+fname+'.cpp')
     system('chmod +x '+fname+'.brz_out')
   except:

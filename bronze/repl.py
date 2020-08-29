@@ -5,11 +5,12 @@ import preprocessing
 import time
 from os import system
 
+code = ""
+
 while True:
-    newCode = preprocessing.preprocess(input('>'))
-    fname = '__repl__'
-    open(fname+'.brz_in','w').write(newCode)
-    Env(fname)
-    system('g++ -o '+fname+".brz_out "+fname+'.cpp')
-    system('chmod +x '+fname+'.brz_out')
-    system(fname+'.brz_out')
+  code = preprocessing.preprocess(input('>')+'\n')
+  open('__repl.brz_in','w').write(code)
+  Env('__repl')
+  system('g++ -o __repl.brz_out __repl.cpp')
+  system('chmod +x __repl.brz_out')
+  system('./__repl.brz_out')
