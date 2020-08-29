@@ -5,7 +5,7 @@ import re
 tab = 0
 inFunction = False
 functions = ""
-starter = '#include <iostream>\n#include <string>\n#include <cstdlib>\n#include <cmath>\n'
+starter = '#include <iostream>\n#include <string>\n#include <cstdlib>\n#include <cmath>\n#include <ctime>\n'
 
 # the main part of our code. Env class is a transpiler that will take our bronze code and produce the equivalent code in main.cpp as C++ code.
 class Env():
@@ -33,14 +33,14 @@ class Env():
       # Getting the ast
       try:
         parsed = classes[parsed[0]](parsed[1])
-      except: print(parsed)
-      # Based on the differnt ast, they will be written differently
+      except: raise
+      # Based on the different ast, they will be written differently
       if type(parsed) in (Declaration,Assignment,Expression,FunctionCall,CppCode) and not inFunction:
         open(cppFile,'a').write(parsed.eval()+";\n")
       elif not inFunction and type(parsed) in (If,WhileLoop,ForLoop,End):
         open(cppFile,'a').write(parsed.eval()+"\n")
       else:
-        if type(parsed) in (Function,End) :
+        if type(parsed) in (Function,Class) :
           functions += parsed.eval()+"\n"
         else:
           functions += parsed.eval()+";\n"
@@ -55,24 +55,39 @@ class Declaration():
   'declaration : [#$%] ID = expression'
   def __init__(self,stream):
     writeStr = ""
-    varType = stream.pop(0)[0]
     # Now, we will examine the code and if the character is a recognizable symbol, we will convert it into a string abbreviation of its data type.
-    if varType == "#":
-      writeStr += "int "
-    elif varType == "$":
-      writeStr += "std::string "
-    elif varType == "%":
-      writeStr += "bool "
-    else:
-      #otherwise, just ignore.
-      pass
+    while stream[1][0] != "=":
+      if stream[0][0] == "#":
+        writeStr += "int "
+        stream.pop(0)
+      elif stream[0][0] == "##":
+        writeStr += "float "
+        stream.pop(0)
+      elif stream[0][0] == "$":
+        writeStr += "std::string "
+        stream.pop(0)
+      elif stream[0][0] == "%":
+        writeStr += "bool "
+        stream.pop(0)
+      elif stream[0][0] == "_":
+        writeStr += "public : "
+        stream.pop(0)
+      elif stream[0][0] == "__":
+        writeStr += "protected : "
+        stream.pop(0)
+      elif stream[0][0] == "___":
+        writeStr += "private : "
+        stream.pop(0)
+      else:
+        writeStr += stream[0][0]+" "
+        stream.pop(0)
     # now, we will add our data type into our main code in main.cpp
     writeStr += stream.pop(0)[0]
-    stream.pop(0)
+
     self.value = Expression(stream)
     self.writeStr = writeStr
   def eval(self):
-    return f'{self.writeStr} = {self.value.eval()}'
+    return f'{self.writeStr} {self.value.eval()}'
 
 
 # This is the class for re-assigning a variable later on.
@@ -198,13 +213,32 @@ class Function():
       # now we will check to relate symbols to their data types. if the data type is not found, we will try to evaluate whatever symbol is given.
       if i[0] == "#":
         writeStr += "int"
+      elif i[0] == "##":
+        writeStr += "float "
       elif i[0] == "$":
         writeStr += "std::string"
       elif i[0] == "%":
         writeStr += "bool"
+      elif i[0] == "_":
+        writeStr += "public :"
+      elif i[0] == "__":
+        writeStr += "protected :"
+      elif i[0] == "___":
+        writeStr += "private :"
       else:
         writeStr += " "+i[0]+" "
     self.writeStr = writeStr
+  def eval(self):
+    return self.writeStr+'{'
+    
+class Class():
+  'class : ^^ ID'
+  def __init__(self,stream):
+    global tab, inFunction
+    inFunction = True
+    tab += 1
+    stream.pop(0)
+    self.writeStr = "class "+stream[0][0]
   def eval(self):
     return self.writeStr+'{'
     
@@ -260,6 +294,7 @@ class CppCode():
 
 # Dictionary holding all classes
 classes = {
+  p_class:Class,
   p_end:End,
   p_if:If,
   p_declaration:Declaration,

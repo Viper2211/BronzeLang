@@ -71,8 +71,10 @@ def p_expr(stream:list)->bool:
 
 # Variable declaration
 def p_declaration(stream:list)->bool:
-  'declaration : [#$%] ID = expression'
-  if accept(stream,OP)[0] in ("#",'$','%'):
+  'declaration : [#,##,$,%,_,__,___]* ID = expression'
+  if accept(stream,(OP,ID)):
+    while accept(stream,(ID,OP)):
+      pass
     expect(stream,ID)
     return True
   return False
@@ -141,13 +143,12 @@ def p_function_call(stream:list)->bool:
       return True
   return False
 
-''' COMING SOON!
+# Class definitions
 def p_class(stream:list)->bool:
   'class : ^^ [#$%] ()'
   if expect(stream,CLASS):
     return True
   return False
-'''
 
 # While Loop
 def p_while(stream:list)->bool:
@@ -179,7 +180,7 @@ def p_end(stream:list)->bool:
   return False
 
 # All the different possibilities
-parsers = [p_function,p_function_call,p_for,p_while,p_if,p_return,p_else,p_end,p_declaration,p_assignment,p_expr,p_cpp]  
+parsers = [p_class,p_function,p_function_call,p_for,p_while,p_if,p_return,p_else,p_end,p_declaration,p_assignment,p_expr,p_cpp]  
 
 # Parse function
 # Goes through all the parsers, and chooses the right one for that stream

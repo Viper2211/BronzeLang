@@ -1,0 +1,20 @@
+; Write function
+; writes out onto the screen
+
+^ # write($ string)
+cpp__ std::cout<< string << std::endl;
+.
+^ # write(# string)
+cpp__ std::cout<< string << std::endl;
+.
+^ # write(## string)
+cpp__ std::cout<< string << std::endl;
+.
+
+; Input function
+; gets Input
+^ $ get()
+cpp__ std::string input = "";
+cpp__ std::cin >> input;
+>> input
+.

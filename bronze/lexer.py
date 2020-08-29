@@ -4,18 +4,23 @@ import parser
 # Tokens
 tokens = {
   r"cpp\_\_ [\s\S]*":parser.CPP,
+  r'\#\#':parser.OP,
+  r'\_':parser.OP,
+  r'\_\_':parser.OP,
+  r'\_\_\_':parser.OP,
   r'\?':parser.IF,
   r'\@\@':parser.WHILE,
   r'\@':parser.FOR,
   r'\:':parser.ELSE,
+  r'\^\^':parser.CLASS,
   r'\^':parser.FUNC,
-#  r'\^\^':parser.CLASS,
   r'\.':parser.END,
-  r"\d+":parser.NUMBER,
+  r'\d*[.]?\d+':parser.NUMBER,
   r'\>\>':parser.RETURN,
   r'true|false':parser.BOOL,
   r'"[^"]*"':parser.STRING,
-  r'Args\.\.\.':parser.ID,
+  r'[a-zA-Z][a-zA-Z0-9_]*'+'\.'+r'[a-zA-Z][a-zA-Z0-9_]*':parser.ID,
+  r'[a-zA-Z][a-zA-Z0-9_]*'+'\.'+r'[a-zA-Z][a-zA-Z0-9_]*\(\)':parser.ID,
   r'\&[a-zA-Z][a-zA-Z0-9_]*':parser.ID,
   r'\*[a-zA-Z][a-zA-Z0-9_]*':parser.ID,
   r'[a-zA-Z][a-zA-Z0-9_]*':parser.ID,
@@ -34,7 +39,8 @@ def lex(code):
   stream = []
   # Setting up the code for lexing
   code = code.replace('\n','')
-  code = code.replace('\t',' ')
+  code = code.replace('\t','')
+  code = code.replace('\r','')
   if "\\cpp\\" not in code:
     code = code.split(';')[0]
 
@@ -57,7 +63,6 @@ def lex(code):
         stream.append((match.group(0), tokens[token]))
     # Else, return -1
     if not matched:
-      stream.append((code,-1))
       return stream
 
   # Return the stream

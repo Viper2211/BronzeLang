@@ -1,0 +1,20 @@
+; random function
+
+srand(time(NULL))
+^ # randint(#i)
+  >> rand()%i;
+.
+
+^ # randnum()
+  >> rand();
+.
+
+; gets a random float
+^ ## randfloat(#i)
+  >> (float(rand())/float((RAND_MAX))*i);
+.
+
+; gets a random float within range
+^ # randuniform(#i,#j)
+  >> rand()%j+i
+.
