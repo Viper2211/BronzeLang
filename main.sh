@@ -1,0 +1,1 @@
+python ./bronze/bronze.py ./main.brz; ./main.brz_out

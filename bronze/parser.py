@@ -3,6 +3,7 @@ STRING = 'STRING'
 NUMBER = 'NUMBER'
 BOOL = 'BOOLEAN'
 ID = 'IDENTIFIER'
+LIST = 'LIST'
 # Keywords
 IF = 'IF'
 ELSE = 'ELSE'
@@ -60,6 +61,10 @@ def p_expr(stream:list)->bool:
     # If a boolean op follows, continue
     if accept(stream,OP)[0] in ('==','>','<','<=','>=','!=','&&','||'):
       return p_expr(stream)
+    return True
+
+  # If there is a bool
+  if accept(stream,(LIST,ID)) and len(stream)>1:
     return True
 
   # If the stream is empty, return True

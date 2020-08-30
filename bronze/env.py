@@ -60,6 +60,9 @@ class Declaration():
       if stream[0][0] == "#":
         writeStr += "int "
         stream.pop(0)
+      elif stream[1][0] == "|":
+        writeStr += "list "
+        stream.pop(0)
       elif stream[0][0] == "##":
         writeStr += "float "
         stream.pop(0)
@@ -114,7 +117,7 @@ class Expression():
       if i[0] =="~":
         writeStr += "+"+""
       else:
-        writeStr += i[0]+" "
+        writeStr += i[0]
     self.writeStr = writeStr
   def eval(self):
     return self.writeStr

@@ -1,0 +1,4 @@
+--> bronze/io.brz 
+
+$ arr[3] = {"str","2","three"}
+write(arr[1])
