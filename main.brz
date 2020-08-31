@@ -1,4 +1,3 @@
---> bronze/io.brz 
-
-$ arr[3] = {"str","2","three"}
-write(arr[1])
+--> bronze/io.brz
+--> bronze/math.brz
+--> bronze/random.brz

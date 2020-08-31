@@ -1,12 +1,9 @@
 ; random function
 
 srand(time(NULL))
+;random integer
 ^ # randint(#i)
   >> rand()%i;
-.
-
-^ # randnum()
-  >> rand();
 .
 
 ; gets a random float

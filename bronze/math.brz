@@ -7,17 +7,17 @@
 
 ; Sqrt function
 ^ # square_root(#a)
-cpp__ return sqrt(a)
+cpp__ return sqrt(a);
 .
 
 ; Log function
 ^ # logarithm(#a)
-cpp__ return log(a)
+cpp__ return log(a);
 .
 
 ; E exponent function
 ^ # e_xp(#a)
-cpp__ return exp(a)
+cpp__ return exp(a);
 .
 
 cpp__ double PI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679

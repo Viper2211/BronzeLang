@@ -5,7 +5,7 @@ import re
 tab = 0
 inFunction = False
 functions = ""
-starter = '#include <iostream>\n#include <string>\n#include <cstdlib>\n#include <cmath>\n#include <ctime>\n'
+starter = '#include <iostream>\n#include <string>\n#include <cstdlib>\n#include <cmath>\n#include <ctime>\n#include <vector>\n'
 
 # the main part of our code. Env class is a transpiler that will take our bronze code and produce the equivalent code in main.cpp as C++ code.
 class Env():
@@ -59,9 +59,6 @@ class Declaration():
     while stream[1][0] != "=":
       if stream[0][0] == "#":
         writeStr += "int "
-        stream.pop(0)
-      elif stream[1][0] == "|":
-        writeStr += "list "
         stream.pop(0)
       elif stream[0][0] == "##":
         writeStr += "float "
